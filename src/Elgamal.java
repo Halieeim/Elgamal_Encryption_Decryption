@@ -8,7 +8,7 @@ public class Elgamal {
     Random rand = new Random();
     public void selectP(){              // selecting random value for p that should be prime and greater than the message that will be encrypted
         do {
-            p = rand.nextLong(129, 65000);
+            p = rand.nextLong(129, 100000);
         } while (!isPrime(p));
     }
     public void selecta(){              // selecting random alpha < p
