@@ -16,7 +16,7 @@ public class Elgamal {
     }
 
     public void selectXA(){             // selecting random XA < p
-        XA = rand.nextLong(2,p);
+        XA = rand.nextLong(2,p-1);
     }
 
     public void selectk(){              // selecting random k < p
