@@ -11,7 +11,7 @@ Implemention of Elgamal Algorithm
 
 * Select private XA where XA < p-1
 
-* Calculate YA = a^XA mod p
+* Calculate YA = alpha^XA mod p
 
 * Public key = {p,alpha,YA}
 
