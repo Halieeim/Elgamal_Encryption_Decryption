@@ -4,7 +4,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Elgamal {
-    long p,a,XA,k;
+    long p,a,XA,i;
     Random rand = new Random();
     public void selectP(){              // selecting random value for p that should be prime and greater than the message that will be encrypted
         do {
@@ -19,8 +19,8 @@ public class Elgamal {
         XA = rand.nextLong(2,p-1);
     }
 
-    public void selectk(){              // selecting random k < p
-        k = rand.nextLong(2,p);
+    public void selecti(){              // selecting random k < p
+        i = rand.nextLong(2,p);
     }
     public long square_Multiply(long a, long b, long n){
         long result = 1;
@@ -60,7 +60,7 @@ public class Elgamal {
         selecta();
         selectXA();
         YA = square_Multiply(a,XA,p);
-        System.out.println("Public Key {p,a,YA} = {" + p + "," + a + "," + YA + "}");
+        System.out.println("\nPublic Key {p,a,YA} = {" + p + "," + a + "," + YA + "}");
         System.out.println("Private Key {XA} = {" + XA + "}");
         long[] pub = {p,a,YA};
         long[] pri = {XA};
@@ -70,23 +70,25 @@ public class Elgamal {
     }
 
     public ArrayList<long[]> encrypt(String text, long[] publicKey){
-        long K,c1,c2;
+        long KM,c1,c2;
         ArrayList<long[]> cipher = new ArrayList<>();
-        selectk();
-        K = square_Multiply(publicKey[2],k,p);
-        c1 = square_Multiply(a,k,p);
-        for (int i = 0; i < text.length(); i++){
-            c2 = square_Multiply(K * text.charAt(i),1,p);       // c2 = KM mod p
+        System.out.println("\ni \t & \t KE for each character:");
+        for (int j = 0; j < text.length(); j++){
+            selecti();
+            KM = square_Multiply(publicKey[2],i,p);
+            c1 = square_Multiply(a,i,p);
+            System.out.println(i + "\t \t" + c1);
+            c2 = square_Multiply(KM * text.charAt(j),1,p);       // c2 = KM * X mod p
             cipher.add(new long[]{c1, c2});
         }
         return cipher;
     }
     public long[] decrypt(ArrayList<long[]> cipher, long[] privateKey){
         long[] plainText = new long[cipher.size()];
-        long Kinv = square_Multiply(cipher.get(0)[0],privateKey[0],p);                                 // K = c1^XA mod p
-        Kinv = EEA(Kinv,p);
-        for (int i = 0; i < cipher.size(); i++){
-            plainText[i] = square_Multiply(cipher.get(i)[1] * Kinv,1,p);              // m = c2 * K^-1 mod p
+        for (int j = 0; j < cipher.size(); j++){
+            long KMinv = square_Multiply(cipher.get(j)[0],privateKey[0],p);                  // KM = c1^XA mod p
+            KMinv = EEA(KMinv,p);
+            plainText[j] = square_Multiply(cipher.get(j)[1] * KMinv,1,p);              // m = c2 * K^-1 mod p
         }
         return plainText;
     }
@@ -102,15 +104,23 @@ public class Elgamal {
         long[] privateKey = keys.get(1);
         /* ****************************************************************Encryption**************************************************************** */
         ArrayList<long[]> encrypted = elgamal.encrypt(plainText,publicKey);
-        System.out.println("Encryption:\n" + Arrays.deepToString(encrypted.toArray()));
+        String cipher = "";
+        for (long[] arr: encrypted){
+            for (long num: arr){
+                cipher = cipher.concat(Long.toHexString(num));
+            }
+        }
+        System.out.println("\nEncryption:\n" + Arrays.deepToString(encrypted.toArray()));
+        System.out.println("Ciphertext:\n" + cipher);
         /* ****************************************************************Decryption**************************************************************** */
         long[] decrypted = elgamal.decrypt(encrypted,privateKey);
+        System.out.println("\nDecryption:\n" + Arrays.deepToString(new long[][]{decrypted}));
         char letter;
         String text = "";
         for (long l : decrypted) {
             letter = (char) l;
             text = text.concat(String.valueOf(letter));
         }
-        System.out.println("Decryption:\n" + text);
+        System.out.println("Plaintext:\n" + text);
     }
 }
