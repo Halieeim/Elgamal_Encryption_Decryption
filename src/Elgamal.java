@@ -111,6 +111,6 @@ public class Elgamal {
             letter = (char) l;
             text = text.concat(String.valueOf(letter));
         }
-        System.out.println("\n" + text);
+        System.out.println("Decryption:\n" + text);
     }
 }
