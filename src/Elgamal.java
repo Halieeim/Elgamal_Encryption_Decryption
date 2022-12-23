@@ -40,16 +40,6 @@ public class Elgamal {
     public boolean isPrime(long number){
         return fermatTest(number);
     }
-    public long GCD(long a, long b){
-        long temp = 0;
-        while (b != 0){
-            temp = a % b;
-            a = b;
-            b = temp;
-        }
-        return a;
-    }
-
     public long EEA(long a, long b){
         long inverse, temp = a;
         for (int i = 2;;i++){
@@ -81,7 +71,6 @@ public class Elgamal {
 
     public ArrayList<long[]> encrypt(String text, long[] publicKey){
         long K,c1,c2;
-        long[] c = new long[2];
         ArrayList<long[]> cipher = new ArrayList<>();
         selectk();
         K = square_Multiply(publicKey[2],k,p);
@@ -94,7 +83,7 @@ public class Elgamal {
     }
     public long[] decrypt(ArrayList<long[]> cipher, long[] privateKey){
         long[] plainText = new long[cipher.size()];
-        long Kinv = square_Multiply(cipher.get(0)[0],XA,p);                                 // K = c1^XA mod p
+        long Kinv = square_Multiply(cipher.get(0)[0],privateKey[0],p);                                 // K = c1^XA mod p
         Kinv = EEA(Kinv,p);
         for (int i = 0; i < cipher.size(); i++){
             plainText[i] = square_Multiply(cipher.get(i)[1] * Kinv,1,p);              // m = c2 * K^-1 mod p
@@ -118,8 +107,8 @@ public class Elgamal {
         long[] decrypted = elgamal.decrypt(encrypted,privateKey);
         char letter;
         String text = "";
-        for (int i = 0; i < decrypted.length; i++){
-            letter = (char) decrypted[i];
+        for (long l : decrypted) {
+            letter = (char) l;
             text = text.concat(String.valueOf(letter));
         }
         System.out.println("\n" + text);
