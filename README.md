@@ -40,3 +40,30 @@ Implemention of Elgamal Algorithm
 * Get K inverse (K^-1) using EEA algorithm
 
 * Plaintext m = c2*K^-1 mod p
+
+### Another way to implement EEA
+
+```
+public static long EEA(long a, long b){
+    long R = 1, Q = b/a, T1 = 0, T2 = 1, T = T1 - (T2*Q), mod = b;
+    while(R != 0){
+        Q = b/a;
+        R = b%a;
+        T = T1 - (T2*Q);
+        T1 = T2;
+        T2 = T;
+        b = a;
+        a = R;
+    }
+    if (T1 < 0){
+        for(int i = -1;;i--){
+            b = mod*i;
+            if(b < T1){
+                T1 = T1 - b;
+                break;
+            }
+        }
+    } 
+    return T1;
+}
+```
